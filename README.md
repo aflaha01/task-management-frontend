@@ -42,4 +42,4 @@ git clone <https://github.com/aflaha01/task-management-frontend>
 cd frontend 
 
 
-**Author:** AFlaha
+Author: AFlaha
