@@ -25,7 +25,7 @@ export default function Navbar() {
             className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-md px-3 sm:px-5 text-xs sm:text-sm"
             asChild
           >
-            <Link to="/register">Get Started</Link>
+            <Link to="/signup">Get Started</Link>
           </Button>
         </nav>
       </div>
