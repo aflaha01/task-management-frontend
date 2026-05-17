@@ -1,9 +1,12 @@
-function App() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white text-4xl">
-      Tailwind Working
-    </div>
-  )
-}
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LandingPage from "@/pages/LandingPage";
 
-export default App
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
