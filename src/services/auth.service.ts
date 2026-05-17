@@ -20,26 +20,42 @@ function extractDRFError(error: AxiosError<DRFError>, fallback: string): string 
   );
 }
 
+function persistSession(username: string, tokens: { access: string; refresh: string }) {
+  localStorage.setItem("accessToken", tokens.access);
+  localStorage.setItem("refreshToken", tokens.refresh);
+  localStorage.setItem("username", username);
+}
+
 export async function signupUser(payload: SignupPayload): Promise<SignupResponse> {
   try {
     const { data } = await api.post<SignupResponse>("/auth/register/", payload);
-    localStorage.setItem("accessToken", data.tokens.access);
-    localStorage.setItem("refreshToken", data.tokens.refresh);
+    persistSession(data.username, data.tokens);
     return data;
   } catch (err) {
-    const axiosErr = err as AxiosError<DRFError>;
-    throw new Error(extractDRFError(axiosErr, "Registration failed. Please try again."));
+    throw new Error(extractDRFError(err as AxiosError<DRFError>, "Registration failed. Please try again."));
   }
 }
 
 export async function loginUser(payload: LoginPayload): Promise<LoginResponse> {
   try {
     const { data } = await api.post<LoginResponse>("/auth/login/", payload);
-    localStorage.setItem("accessToken", data.tokens.access);
-    localStorage.setItem("refreshToken", data.tokens.refresh);
+    persistSession(data.username, data.tokens);
     return data;
   } catch (err) {
-    const axiosErr = err as AxiosError<DRFError>;
-    throw new Error(extractDRFError(axiosErr, "Invalid username or password."));
+    throw new Error(extractDRFError(err as AxiosError<DRFError>, "Invalid username or password."));
   }
+}
+
+export async function logoutUser(): Promise<void> {
+  const refreshToken = localStorage.getItem("refreshToken");
+  if (refreshToken) {
+    try {
+      await api.post("/auth/logout/", { refresh: refreshToken });
+    } catch {
+      // best-effort — still clear client side
+    }
+  }
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("username");
 }

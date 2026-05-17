@@ -14,7 +14,6 @@ import { loginUser } from "@/services/auth.service";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const form = useForm<LoginFormValues>({
@@ -25,8 +24,9 @@ export function LoginForm() {
     },
   });
 
+  const isSubmitting = form.formState.isSubmitting;
+
   async function onSubmit(values: LoginFormValues) {
-    setIsLoading(true);
     try {
       const res = await loginUser(values);
 
@@ -39,8 +39,6 @@ export function LoginForm() {
       toast.error("Login failed", {
         description: error instanceof Error ? error.message : "Something went wrong.",
       });
-    } finally {
-      setIsLoading(false);
     }
   }
 
@@ -116,9 +114,9 @@ export function LoginForm() {
       <Button
         type="submit"
         className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
-        disabled={isLoading}
+        disabled={isSubmitting}
       >
-        {isLoading ? (
+        {isSubmitting ? (
           <>
             <Loader2 size={15} className="mr-2 animate-spin" />
             Signing in…

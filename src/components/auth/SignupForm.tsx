@@ -15,7 +15,6 @@ import { signupUser } from "@/services/auth.service";
 export function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const form = useForm<SignupFormValues>({
@@ -27,8 +26,9 @@ export function SignupForm() {
     },
   });
 
+  const isSubmitting = form.formState.isSubmitting;
+
   async function onSubmit(values: SignupFormValues) {
-    setIsLoading(true);
     try {
       const res = await signupUser({
         username: values.username,
@@ -45,8 +45,6 @@ export function SignupForm() {
       toast.error("Registration failed", {
         description: error instanceof Error ? error.message : "Something went wrong.",
       });
-    } finally {
-      setIsLoading(false);
     }
   }
 
@@ -62,8 +60,7 @@ export function SignupForm() {
             <FieldLabel htmlFor={field.name}>Username</FieldLabel>
             <div className="relative">
               <UserRound
-                size={15}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none size-4"
               />
               <Input
                 {...field}
@@ -90,8 +87,7 @@ export function SignupForm() {
             <FieldLabel htmlFor={field.name}>Password</FieldLabel>
             <div className="relative">
               <Lock
-                size={15}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none size-4"
               />
               <Input
                 {...field}
@@ -109,7 +105,7 @@ export function SignupForm() {
                 aria-label={showPassword ? "Hide password" : "Show password"}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
               >
-                {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
               </button>
             </div>
             <FieldDescription>Must be at least 8 characters</FieldDescription>
@@ -129,8 +125,7 @@ export function SignupForm() {
             <FieldLabel htmlFor={field.name}>Confirm Password</FieldLabel>
             <div className="relative">
               <ShieldCheck
-                size={15}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none size-4"
               />
               <Input
                 {...field}
@@ -148,7 +143,7 @@ export function SignupForm() {
                 aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
               >
-                {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
+                {showConfirm ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
               </button>
             </div>
             {fieldState.invalid && (
@@ -161,11 +156,11 @@ export function SignupForm() {
       <Button
         type="submit"
         className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
-        disabled={isLoading}
+        disabled={isSubmitting}
       >
-        {isLoading ? (
+        {isSubmitting ? (
           <>
-            <Loader2 size={15} className="mr-2 animate-spin" />
+            <Loader2 className="mr-2 animate-spin size-4" />
             Creating account…
           </>
         ) : (
